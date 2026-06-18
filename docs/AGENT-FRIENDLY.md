@@ -69,7 +69,25 @@ Examples:
 > designs (preview the effect; prefer reversible actions like move-to-folder over delete). Never let a
 > hint be the thing standing between a bug and data loss.
 
-## 9. Evaluate & iterate
+## 9. Discoverability — make the tool self-describing (MCP `tools/list`)
+An agent should be able to enumerate what the plugin can do, and fetch each verb's description and
+expected input schema, **at runtime** — not rely on hardcoded knowledge. MCP does this via
+`tools/list` (name + description + `inputSchema` + annotations per tool). The zero-backend equivalent:
+
+- Keep a single **`TOOLS` catalog** in the kernel (name, description, flat `inputSchema`, annotations)
+  that *both* discovery and execution read from — so they can never drift.
+- Expose a **`describe`** command that emits that catalog as JSON (`describe` for all, `describe --name X`
+  for one). This is the introspection surface an agent calls to learn the verbs and their schemas.
+
+```bash
+python3 -m example.client describe          # → {"tools": [{name, description, inputSchema, annotations}, …]}
+python3 -m example.client describe --name list
+```
+
+A skill's `SKILL.md` should point at `describe` as the source of truth for arguments rather than
+duplicating the schema (which would drift).
+
+## 10. Evaluate & iterate
 Build realistic multi-step eval tasks (not toy sandboxes). Measure tokens, call-count, and error rate
 — not just success. Feed transcripts back in to find contradictory descriptions and consolidation
 opportunities.

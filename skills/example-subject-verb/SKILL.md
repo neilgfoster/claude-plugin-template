@@ -22,10 +22,20 @@ A real "what this does" section explains the operation in plain terms and, cruci
 agent should reach for it** versus a neighbouring tool. Make implicit context explicit (niche terms,
 prerequisites like "run `/{{NAME}}-auth-login` first", relationships to other tools).
 
+## Discoverability
+
+Verbs, descriptions, and input schemas are discoverable at runtime — don't rely on this doc being
+in sync. Ask the kernel (the `TOOLS` catalog is the single source of truth, like MCP `tools/list`):
+
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/src/example/client.py" describe            # all verbs
+python3 "${CLAUDE_PLUGIN_ROOT}/src/example/client.py" describe --name list # one verb's schema
+```
+
 ## Inputs (JSON Schema — typed, described, flat)
 
 Keep schemas flat: **no `oneOf`/`allOf`/`anyOf` at the top level** (MCP-incompatible). Name params
-unambiguously (`rule_id`, not `id`).
+unambiguously (`rule_id`, not `id`). This schema is mirrored in the kernel's `TOOLS` catalog (above).
 
 ```json
 {
