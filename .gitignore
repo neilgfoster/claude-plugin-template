@@ -20,3 +20,20 @@ specs/
 .github/agents/speckit*
 .github/prompts/speckit*
 # --- end ---
+
+# --- tredl (solo trial) ---
+# tredl is installed transparently for one person: the Spec Kit and tredl artifacts below stay
+# local, so adopting tredl leaves (almost) no footprint on the team. When the value is proven,
+# delete this block and commit the artifacts to graduate the team. See
+# docs/adr/0003-transparent-solo-by-default.md.
+# Caveat: if your repo already tracks a CLAUDE.md, Spec Kit appends a small SPECKIT pointer
+# block to it - a tracked edit a .gitignore cannot cover. Run `git checkout CLAUDE.md` to drop
+# it for a zero tracked footprint, or keep it.
+.tredl/
+.specify/
+specs/
+.claude/skills/speckit-*/
+.agents/skills/speckit-*/
+.github/agents/speckit*
+.github/prompts/speckit*
+# --- end tredl ---
