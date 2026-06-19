@@ -9,23 +9,43 @@ harvested later, from working plugins, not invented up front.
 
 ## Layout
 
+Two tiers: the **repo root** builds/tests/distributes the plugin; **`plugin/`** is the shippable
+payload that gets installed.
+
 ```
-.claude-plugin/plugin.json     # manifest ({{NAME}}/{{DESCRIPTION}} placeholders)
-skills/<subject>-<verb>/SKILL.md  # one exemplary skill demonstrating the conventions
-src/<plugin>/                  # stdlib Python kernel (importable + runnable by skills)
-  client.py                    # urllib+json idiom + output-shaping patterns (stub)
-hooks/hooks.json               # optional PreToolUse example (delete if unused)
-docs/AGENT-FRIENDLY.md         # REQUIRED READING before adding a skill
+.claude-plugin/marketplace.json   # marketplace manifest — points at ./plugin ({{NAME}} placeholder)
+plugin/                           # THE PLUGIN PAYLOAD (this is what installs)
+  .claude-plugin/plugin.json      #   plugin manifest ({{NAME}}/{{DESCRIPTION}} placeholders)
+  skills/<subject>-<verb>/SKILL.md#   one exemplary skill demonstrating the conventions
+  src/<plugin>/                   #   stdlib Python kernel (importable + runnable by skills)
+    client.py                     #     urllib+json idiom + output-shaping patterns (stub)
+  hooks/hooks.json                #   optional PreToolUse example (delete if unused)
+pyproject.toml                    # ruff + pytest config (dev tooling only — never ships)
+tests/                            # guards the manifest install path + the runnable kernel
+.github/workflows/{ci,release}.yml# lint+test on PR; tag-driven GitHub Release
+CHANGELOG.md  CONTRIBUTING.md      # Keep-a-Changelog + contributor standards
+docs/AGENT-FRIENDLY.md            # REQUIRED READING before adding a skill
 ```
+
+Inside the plugin, reference bundled files via `${CLAUDE_PLUGIN_ROOT}/...` — it resolves to `plugin/`.
 
 ## How to instantiate
 
 1. Copy this repo to `~/source/neilgfoster/<plugin>` and `git init`.
-2. Rename `src/example` → `src/<plugin>`; update `APP` in `client.py`.
-3. Rename `skills/example-subject-verb` → real `<subject>-<verb>` skills.
-4. Fill the `{{NAME}}` / `{{DESCRIPTION}}` placeholders in `.claude-plugin/plugin.json`.
+2. Rename `plugin/src/example` → `plugin/src/<plugin>`; update `APP` in `client.py` and
+   `known-first-party` in `pyproject.toml`.
+3. Rename `plugin/skills/example-subject-verb` → real `<subject>-<verb>` skills.
+4. Fill the `{{NAME}}` / `{{DESCRIPTION}}` placeholders in `.claude-plugin/marketplace.json` and
+   `plugin/.claude-plugin/plugin.json` (the marketplace entry name must equal the plugin name).
 5. Build features spec-first (Spec-Driven Development):
    `/speckit-specify` → `clarify` → `plan` → `tasks` → `implement`.
+
+## Verify before done
+
+```sh
+ruff check . && ruff format --check .
+python3 -m pytest -q
+```
 
 ## Non-negotiable conventions
 
