@@ -50,9 +50,9 @@ is unavailable, install them isolated with [`uv`](https://docs.astral.sh/uv/)
 ruff check . && ruff format --check .   # apply with `ruff format .` if it wants changes
 python3 -m pytest -q
 
-# Stdlib-only guard (mirrored in tests/test_stdlib_only.py): the shipped payload must import
-# only the standard library. This must find nothing.
-grep -rnE '^\s*(import|from)\s+(msal|azure|requests|urllib3|httpx|aiohttp|msgraph|pydantic|yaml|dotenv)\b' plugin/src/
+# Stdlib-only guard — the same grep CI enforces in tests/test_stdlib_only.py. The shipped
+# payload under plugin/src must import only the standard library (plus its own package).
+grep -rnE '^\s*(import|from)\s+(msal|azure|requests|urllib3|httpx|aiohttp|msgraph|pydantic|yaml|dotenv)\b' plugin/src && echo 'FORBIDDEN IMPORT' || echo 'stdlib-only OK'
 ```
 
 ## Non-negotiable conventions
