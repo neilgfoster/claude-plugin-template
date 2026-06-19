@@ -42,9 +42,17 @@ Inside the plugin, reference bundled files via `${CLAUDE_PLUGIN_ROOT}/...` — i
 
 ## Verify before done
 
+`ruff` and `pytest` are dev tooling only — they never ship inside `plugin/`. If `python3 -m pip`
+is unavailable, install them isolated with [`uv`](https://docs.astral.sh/uv/)
+(`uv tool install ruff pytest`, then `export PATH="$HOME/.local/bin:$PATH"`).
+
 ```sh
-ruff check . && ruff format --check .
+ruff check . && ruff format --check .   # apply with `ruff format .` if it wants changes
 python3 -m pytest -q
+
+# Stdlib-only guard (mirrored in tests/test_stdlib_only.py): the shipped payload must import
+# only the standard library. This must find nothing.
+grep -rnE '^\s*(import|from)\s+(msal|azure|requests|urllib3|httpx|aiohttp|msgraph|pydantic|yaml|dotenv)\b' plugin/src/
 ```
 
 ## Non-negotiable conventions
