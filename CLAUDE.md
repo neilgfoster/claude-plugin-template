@@ -44,3 +44,8 @@ Two situations you might be in:
 2. Rename `skills/example-subject-verb` → real `<subject>-<verb>` skills.
 3. Fill `{{NAME}}` / `{{DESCRIPTION}}` in `.claude-plugin/plugin.json`.
 4. Build each skill against `docs/AGENT-FRIENDLY.md`.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
