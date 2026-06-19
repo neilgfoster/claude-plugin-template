@@ -1,0 +1,14 @@
+{
+  "name": "{{NAME}}",
+  "owner": {
+    "name": "Neil Foster",
+    "url": "https://github.com/neilgfoster"
+  },
+  "plugins": [
+    {
+      "name": "{{NAME}}",
+      "source": "./plugin",
+      "description": "{{DESCRIPTION}}"
+    }
+  ]
+}

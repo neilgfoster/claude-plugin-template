@@ -30,20 +30,38 @@ Two situations you might be in:
 
 ## Where things are
 
+**Two tiers.** The repo root builds/tests/distributes the plugin; everything under `plugin/` is the
+shippable payload that installs. `${CLAUDE_PLUGIN_ROOT}` resolves to `plugin/`.
+
 | Path | Purpose |
 |---|---|
-| `.claude-plugin/plugin.json` | Plugin manifest (`{{NAME}}`/`{{DESCRIPTION}}` placeholders) |
-| `skills/<subject>-<verb>/SKILL.md` | Agent-facing commands; one exemplary skill ships in the template |
-| `src/<plugin>/client.py` | Stdlib kernel — importable AND runnable (`python3 -m <plugin>.client …`) |
+| `.claude-plugin/marketplace.json` | **Root** marketplace manifest; `source: ./plugin`, name must match the plugin's |
+| `plugin/.claude-plugin/plugin.json` | Plugin manifest (`{{NAME}}`/`{{DESCRIPTION}}` placeholders) |
+| `plugin/skills/<subject>-<verb>/SKILL.md` | Agent-facing commands; one exemplary skill ships in the template |
+| `plugin/src/<plugin>/client.py` | Stdlib kernel — importable AND runnable (`python3 -m <plugin>.client …`) |
+| `plugin/hooks/hooks.json` | Optional PreToolUse example (delete if unused) |
+| `pyproject.toml`, `tests/`, `.github/` | Dev tooling (ruff/pytest), manifest/kernel guards, CI+release |
+| `CHANGELOG.md`, `CONTRIBUTING.md` | Keep-a-Changelog + contributor standards |
 | `docs/AGENT-FRIENDLY.md` | **Required reading** — the MCP/agent-tool design principles |
 | `README.md` | Human-facing overview + instantiation steps |
 
 ## How to instantiate a real plugin
 
-1. Copy this repo; rename `src/example` → `src/<plugin>` (update `APP` in `client.py`).
-2. Rename `skills/example-subject-verb` → real `<subject>-<verb>` skills.
-3. Fill `{{NAME}}` / `{{DESCRIPTION}}` in `.claude-plugin/plugin.json`.
+1. Copy this repo; rename `plugin/src/example` → `plugin/src/<plugin>` (update `APP` in `client.py`
+   and `known-first-party` in `pyproject.toml`).
+2. Rename `plugin/skills/example-subject-verb` → real `<subject>-<verb>` skills.
+3. Fill `{{NAME}}` / `{{DESCRIPTION}}` in `.claude-plugin/marketplace.json` and
+   `plugin/.claude-plugin/plugin.json` (marketplace entry name must equal the plugin name).
 4. Build each skill against `docs/AGENT-FRIENDLY.md`.
+
+## Verify before claiming done
+
+```sh
+ruff check . && ruff format --check .
+python3 -m pytest -q
+```
+
+`.github/workflows/ci.yml` runs exactly these; green CI is part of the Definition of Done.
 
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
